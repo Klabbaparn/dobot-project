@@ -1,14 +1,17 @@
-#pragma once
+#ifndef KEYBOARD_H
+#define KEYBOARD_H
 #include <Point.h>
 #include <map>
+#include <string>
 class keyboard
 {
 public:
 	keyboard();
+	Point getKeyCoord(const char charToPrint);
 	~keyboard() {}
 
 private:
-	int m_keyWidth = 10;
-	int m_keyHeight = 12;
+	std::map<const char, Point> m_KeyboardCoords;
 };
 
+#endif // KEYBOARD_H
