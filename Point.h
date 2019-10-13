@@ -1,19 +1,23 @@
-#pragma once
+#ifndef POINT_H
+#define POINT_H
 #include <string>
 #include <iostream>
 
 class Point
 {
 public:
-	Point(float x, float y){}
+	Point(float x, float y) : m_x(x), m_y(y){}
 	Point() : m_x(0), m_y(0){}
 	~Point();
-	const int getX() const { return m_x; }
-	const int getY() const { return m_y; }
+	const float getX() const { return m_x; }
+	const float getY() const { return m_y; }
+	Point(const Point&);
 	void operator=(const Point& rhs);
 	friend std::ostream& operator<<(std::ostream& os, const Point& rhs);
 
 private:
-	int m_x;
-	int m_y;
+	float m_x;
+	float m_y;
 };
+
+#endif // POINT_H

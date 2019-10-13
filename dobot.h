@@ -1,10 +1,11 @@
-#pragma once
+#ifndef DOBOT_H
+#define DOBOT_H
 #include <QObject>
 #include "DobotDll.h"
 #include "DobotType.h"
 #include <QVector>
 #include <QMainWindow>
-//#include "Point.h"
+#include <keyboard.h>
 
 class dobot : public QObject
 {
@@ -23,18 +24,17 @@ public:
 	void JOGCtrlBtnPressed(int index, bool isJoint);
 	void JOGCtrlBtnReleased(bool isJoint);
 	void enablePumpCtrl();
-	void startPump();
-	void PTPSendBtnClicked(float x, float y, float z, float r);
+	void PTPSendBtnClicked(float x, float y, float z, float r) const;
 	void HomeSafeBtnClicked() const;
-	void PrintBtnClicked(QString string);
+	void PrintBtnClicked(Point keyCoord);
 	
 
 private:
 
 
 	void setTheEndEffParam() const;
-	//void startPump();
 	void stopPump();
+	void startPump();
 
 private:
 	bool m_isConnected = false;
@@ -43,4 +43,6 @@ private:
 	char deviceName[64];
 	
 };
+
+#endif // DOBOT_H
 

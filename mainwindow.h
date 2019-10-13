@@ -5,6 +5,7 @@
 #include "DobotDll.h"
 #include "DobotType.h"
 #include "dobot.h"
+#include "keyboard.h"
 namespace Ui {
 class MainWindow;
 }
@@ -43,6 +44,7 @@ private slots:
 
 private:
 	dobot m_dobot;
+	keyboard m_keyboard;
 };
 
 #endif // MAINWINDOW_H

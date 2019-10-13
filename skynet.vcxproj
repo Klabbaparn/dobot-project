@@ -211,6 +211,7 @@
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="ui_mainwindow.h" />
     <ClInclude Include="voce.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

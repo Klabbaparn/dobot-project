@@ -1,0 +1,12 @@
+/Win32
+/voce-0.9.1
+/Output
+/Debug
+skynet.vcxproj.filters
+skynet.pro.user
+.qmake.stash
+Dobot.Dll/
+Win32/Debug/
+debug/
+release/
+Output/

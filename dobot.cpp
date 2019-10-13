@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <ui_mainwindow.h>
 #include "mainwindow.h"
-
+#include <string>
 #include <QMessageBox>
 #include <QDebug>
 #include <QSignalMapper>
@@ -64,22 +64,19 @@ void dobot::JOGCtrlBtnReleased(bool isJoint)
 
 void dobot::startPump()
 {
-	//int SetEndEffectorSuctionCup(bool enableCtrl, bool suck,
-	//	bool isQueued, uint64_t *queuedCmdIndex)
-	
 	m_PumpIsActive = true;
 	SetEndEffectorSuctionCup(m_PumpIsActive, 1, 1, 0);
 	qDebug() << "inside startPump";
 }
 
-void dobot::PTPSendBtnClicked(float x, float y, float z, float r)
+void dobot::PTPSendBtnClicked(float x, float y, float z, float r) const
 {
 	PTPCmd ptpCmd;
 	ptpCmd.ptpMode = PTPMOVJXYZMode;
-	ptpCmd.x = x; //ui->xPTPEdit->text().toFloat();
-	ptpCmd.y = y; //ui->yPTPEdit->text().toFloat();
-	ptpCmd.z = z; //ui->zPTPEdit->text().toFloat();
-	ptpCmd.r = r; //ui->rPTPEdit->text().toFloat();
+	ptpCmd.x = x; 
+	ptpCmd.y = y; 
+	ptpCmd.z = z; 
+	ptpCmd.r = r; 
 
 	while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
 	}
@@ -90,37 +87,14 @@ void dobot::HomeSafeBtnClicked() const
 	PTPCmd ptpCmd;
 	ptpCmd.ptpMode = PTPMOVJXYZMode;
 	ptpCmd.x = 200;
-	ptpCmd.y = 0; //ui->yPTPEdit->text().toFloat();
-	ptpCmd.z = -20; //ui->zPTPEdit->text().toFloat();
-	ptpCmd.r = 0; //ui->rPTPEdit->text().toFloat();
+	ptpCmd.y = 0; 
+	ptpCmd.z = 50; 
+	ptpCmd.r = 0; 
 
 	while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
 	}
-	//PTPCmd ptpCmd;
-	//ptpCmd.ptpMode = PTPMOVJXYZMode;
-	//ptpCmd.x = 215;
-	//ptpCmd.y = -170; //ui->yPTPEdit->text().toFloat();
-	//ptpCmd.z = -40; //ui->zPTPEdit->text().toFloat();
-	//ptpCmd.r = 0; //ui->rPTPEdit->text().toFloat();
-
-	//while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
-	//}
-
-	////PTPCmd ptpCmd;
-	////ptpCmd.ptpMode = PTPMOVJXYZMode;
-	//ptpCmd.x = 215;
-	//ptpCmd.y = -170; //ui->yPTPEdit->text().toFloat();
-	//ptpCmd.z = -60; //ui->zPTPEdit->text().toFloat();
-	//ptpCmd.r = 0; //ui->rPTPEdit->text().toFloat();
-
-	//while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
-	//}
 }
 
-void dobot::PrintBtnClicked(QString string)
-{
-
-}
 
 void dobot::stopPump()
 {
@@ -140,6 +114,7 @@ void dobot::enablePumpCtrl()
 		qDebug() << "insideEnablePump if pump IS active";
 		stopPump();
 	}
+	//return m_PumpIsActive == 1;
 }
 
 void dobot::setTheEndEffParam() const
@@ -196,14 +171,6 @@ void dobot::init()
 	SetQueuedCmdClear();
 	SetQueuedCmdStartExec();
 	setTheEndEffParam();
-	//char deviceSN[64];
-	//SetDeviceSN(deviceSN);
-	//GetDeviceSN(deviceSN, sizeof(deviceSN));
-
-	//char deviceName[64];
-	//GetDeviceName(deviceName, sizeof(deviceName));
-
-
 }
 
 bool dobot::connect()
@@ -214,7 +181,6 @@ bool dobot::connect()
 		if (isConnected())
 		{
 			qDebug() << "isConnected";
-			//init();
 		}
 	}
 
@@ -227,5 +193,28 @@ void dobot::disconnect()
 		qDebug() << "trying to disconnect";
 		DisconnectDobot();
 		m_isConnected = false;
+	}
+}
+
+void dobot::PrintBtnClicked(Point keyCoord)
+{	
+	std::cout << "inside printBtnclicked" << std::endl;
+	std::cout << keyCoord << std::endl;
+	PTPCmd ptpCmd;
+	ptpCmd.ptpMode = PTPMOVJXYZMode;
+	ptpCmd.x = keyCoord.getX();
+	ptpCmd.y = keyCoord.getY();
+	ptpCmd.z = -40; 
+	ptpCmd.r = 0; 
+
+	while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
+	}
+	//press
+	ptpCmd.z = -60;
+	while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
+	}
+	//hover
+	ptpCmd.z = -40;
+	while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
 	}
 }

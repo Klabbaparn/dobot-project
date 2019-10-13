@@ -6,6 +6,7 @@
 #include <QSignalMapper>
 #include <QTimer>
 #include <QString>
+//#include <voce.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,8 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->PumpBtnON, SIGNAL(clicked(bool)), this, SLOT(onPumpBtnClicked()));
 	connect(ui->PumpBtnOFF, SIGNAL(clicked(bool)), this, SLOT(onPumpBtnClicked()));
 	connect(ui->HomeSafeBtn, SIGNAL(clicked(bool)), this, SLOT(onHomeSafeBtnClicked()));
-	//connect(ui->PrintBtn, SIGNAL(clicked(bool)), this, SLOT(onPrintBtnClicked()));
-	connect(ui->PrintBtn, SIGNAL(sendMessage(QString)), this, SLOT(onPrintBtnClicked(QString message)));
+	connect(ui->PrintBtn, SIGNAL(clicked(bool)), this, SLOT(onPrintBtnClicked()));
+	//connect(ui->PrintBtn, SIGNAL(sendMessage(QString)), this, SLOT(onPrintBtnClicked(QString message)));
 
     //init JOG control
     initControl();
@@ -174,8 +175,6 @@ void MainWindow::refreshBtn()
         ui->zPTPEdit->setEnabled(false);
         ui->rPTPEdit->setEnabled(false);
 
-		ui->PumpBtnON->setEnabled(false);
-		ui->PumpBtnOFF->setEnabled(false);
 		ui->HomeSafeBtn->setEnabled(false);
 		ui->PrintBtn->setEnabled(false);
     }
@@ -284,30 +283,26 @@ void MainWindow::initControl()
 void MainWindow::onJOGCtrlBtnPressed(int index)
 {
 	m_dobot.JOGCtrlBtnPressed(index, ui->teachMode->currentIndex() == 1);
-	/*JOGCmd jogCmd;
-
-    jogCmd.isJoint = ui->teachMode->currentIndex() == 0;
-    jogCmd.cmd = index + 1;
-    while (SetJOGCmd(&jogCmd, false, NULL) != DobotCommunicate_NoError) {
-    }*/
 }
 
 void MainWindow::onJOGCtrlBtnReleased()
 {
 	m_dobot.JOGCtrlBtnReleased(ui->teachMode->currentIndex() == 1);
-    /*JOGCmd jogCmd;
-
-    jogCmd.isJoint = ui->teachMode->currentIndex() == 0;
-    jogCmd.cmd = JogIdle;
-    while (SetJOGCmd(&jogCmd, false, NULL) != DobotCommunicate_NoError) {
-    }*/
 }
 
 void MainWindow::onPumpBtnClicked()
 {
-	qDebug() << "inside onPumpBtnClicked";
-	//m_dobot.startPump();
 	m_dobot.enablePumpCtrl();
+	/*if (!m_dobot.enablePumpCtrl())
+	{
+		ui->PumpBtnON->setEnabled(false);
+		ui->PumpBtnOFF->setEnabled(true);
+	}
+	else
+	{
+		ui->PumpBtnON->setEnabled(true);
+		ui->PumpBtnOFF->setEnabled(false);
+	}*/
 }
 
 void MainWindow::onHomeSafeBtnClicked()
@@ -315,13 +310,6 @@ void MainWindow::onHomeSafeBtnClicked()
 	ui->HomeSafeBtn->setEnabled(false);
 	m_dobot.HomeSafeBtnClicked();
 	ui->HomeSafeBtn->setEnabled(true);
-}
-
-void MainWindow::onPrintBtnClicked()
-{
-	ui->PrintBtn->setEnabled(false);
-	QString buttonText = ui->stringType->text();
-	m_dobot.PrintBtnClicked(buttonText);
 }
 
 
@@ -333,16 +321,23 @@ void MainWindow::onPTPsendBtnClicked()
 		ui->zPTPEdit->text().toFloat(), 
 		ui->rPTPEdit->text().toFloat());
 
-    /*PTPCmd ptpCmd;
-    ptpCmd.ptpMode = PTPMOVJXYZMode;
-    ptpCmd.x = ui->xPTPEdit->text().toFloat();
-    ptpCmd.y = ui->yPTPEdit->text().toFloat();
-    ptpCmd.z = ui->zPTPEdit->text().toFloat();
-    ptpCmd.r = ui->rPTPEdit->text().toFloat();
-
-    while (SetPTPCmd(&ptpCmd, true, NULL) != DobotCommunicate_NoError) {
-    }*/
     ui->sendBtn->setEnabled(true);
+}
+
+void MainWindow::onPrintBtnClicked()
+{
+	ui->PrintBtn->setEnabled(false);
+	QString buttonText = ui->stringType->text();
+	std::string stringToPrint = buttonText.toLocal8Bit().constData();
+	//qDebug() << buttonText;
+	//std::cout << stringToPrint << std::endl;
+	for (unsigned i = 0; i < stringToPrint.size(); i++)
+	{
+		const char charToPrint = stringToPrint[i];
+		Point keyCoord = m_keyboard.getKeyCoord(charToPrint);
+		m_dobot.PrintBtnClicked(keyCoord);
+	}
+	ui->PrintBtn->setEnabled(true);
 }
 
 void MainWindow::closeEvent(QCloseEvent *)
