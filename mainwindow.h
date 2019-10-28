@@ -6,6 +6,19 @@
 #include "DobotType.h"
 #include "dobot.h"
 #include "keyboard.h"
+
+#include <QMessageBox>
+#include <QDebug>
+#include <QSerialPortInfo>
+#include <assert.h>
+#include <QFile>
+#include <QXmlStreamWriter>
+#include <QDomDocument>
+
+//#include "VisionDll.h"
+//#include "JHCap.h"
+//#include "capturethread.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -30,6 +43,9 @@ private:
     void refreshBtn();
     void initDobot();
     void initControl();
+	//void connectCam(); // work in progress
+	//void initCamParams(void); // work in progress
+
 
 private slots:
     void onChangedMode();

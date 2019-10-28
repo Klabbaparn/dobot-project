@@ -6,7 +6,6 @@
 #include <QSignalMapper>
 #include <QTimer>
 #include <QString>
-//#include <voce.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,8 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //connectStatus = false;
-	
+    
     //endtype change
     connect(ui->teachMode, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangedMode()));
 
@@ -27,12 +25,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	//start pump
 	connect(ui->PumpBtnON, SIGNAL(clicked(bool)), this, SLOT(onPumpBtnClicked()));
+	//turn off pump
 	connect(ui->PumpBtnOFF, SIGNAL(clicked(bool)), this, SLOT(onPumpBtnClicked()));
+	//go home safely
 	connect(ui->HomeSafeBtn, SIGNAL(clicked(bool)), this, SLOT(onHomeSafeBtnClicked()));
+	//print string on a keyboard
 	connect(ui->PrintBtn, SIGNAL(clicked(bool)), this, SLOT(onPrintBtnClicked()));
-	//connect(ui->PrintBtn, SIGNAL(sendMessage(QString)), this, SLOT(onPrintBtnClicked(QString message)));
 
     //init JOG control
+	//connectCam(); // work in progress
     initControl();
 
     //getPose Timer
@@ -100,12 +101,7 @@ void MainWindow::onChangedMode()
 
 void MainWindow::onConnectDobot()
 {
-    //connect dobot
-    /*if (!connectStatus) {
-        if (ConnectDobot(0, 115200,0,0) != DobotConnect_NoError) {
-            QMessageBox::information(this, tr("error"), tr("Connect dobot error!!!"), QMessageBox::Ok);
-            return;
-        }*/
+    
 	if (!m_dobot.isConnected()) {
 		if (!m_dobot.connect()) {
 			qDebug() << "error!!!";
@@ -113,7 +109,7 @@ void MainWindow::onConnectDobot()
 			return;
 		}
         connectStatus = true;
-        refreshBtn(); //Klar
+        refreshBtn(); 
 		m_dobot.init();
         initDobot();
 
@@ -125,7 +121,6 @@ void MainWindow::onConnectDobot()
         getPoseTimer->stop();
         connectStatus = false;
         refreshBtn();
-        //DisconnectDobot();
 		m_dobot.disconnect();
     }
 }
@@ -194,56 +189,6 @@ void MainWindow::initDobot()
 	uint8_t majorVersion, minorVersion, revision;
 	GetDeviceVersion(&majorVersion, &minorVersion, &revision);
 	ui->DeviceInfoLabel->setText(QString::number(majorVersion) + "." + QString::number(minorVersion) + "." + QString::number(revision));
-    //Command timeout
-    //SetCmdTimeout(3000);
-    //clear old commands and set the queued command running
-    //SetQueuedCmdClear();
-    //SetQueuedCmdStartExec();
-
-  
-    //set the end effector parameters
-    /*EndEffectorParams endEffectorParams;
-    memset(&endEffectorParams, 0, sizeof(endEffectorParams));
-    endEffectorParams.xBias = 71.6f;
-    SetEndEffectorParams(&endEffectorParams, false, NULL);
-
-    JOGJointParams jogJointParams;
-    for (int i = 0; i < 4; i++) {
-        jogJointParams.velocity[i] = 100;
-        jogJointParams.acceleration[i] = 100;
-    }
-    SetJOGJointParams(&jogJointParams, false, NULL);
-
-    JOGCoordinateParams jogCoordinateParams;
-    for (int i = 0; i < 4; i++) {
-        jogCoordinateParams.velocity[i] = 100;
-        jogCoordinateParams.acceleration[i] = 100;
-    }
-    SetJOGCoordinateParams(&jogCoordinateParams, false, NULL);
-
-    JOGCommonParams jogCommonParams;
-    jogCommonParams.velocityRatio = 50;
-    jogCommonParams.accelerationRatio = 50;
-    SetJOGCommonParams(&jogCommonParams, false, NULL);
-
-    PTPJointParams ptpJointParams;
-    for (int i = 0; i < 4; i++) {
-        ptpJointParams.velocity[i] = 100;
-        ptpJointParams.acceleration[i] = 100;
-    }
-    SetPTPJointParams(&ptpJointParams, false, NULL);
-
-    PTPCoordinateParams ptpCoordinateParams;
-    ptpCoordinateParams.xyzVelocity = 100;
-    ptpCoordinateParams.xyzAcceleration = 100;
-    ptpCoordinateParams.rVelocity = 100;
-    ptpCoordinateParams.rAcceleration = 100;
-    SetPTPCoordinateParams(&ptpCoordinateParams, false, NULL);
-
-    PTPJumpParams ptpJumpParams;
-    ptpJumpParams.jumpHeight = 20;
-    ptpJumpParams.zLimit = 150;
-    SetPTPJumpParams(&ptpJumpParams, false, NULL);*/
 }
 
 void MainWindow::initControl()
@@ -293,16 +238,6 @@ void MainWindow::onJOGCtrlBtnReleased()
 void MainWindow::onPumpBtnClicked()
 {
 	m_dobot.enablePumpCtrl();
-	/*if (!m_dobot.enablePumpCtrl())
-	{
-		ui->PumpBtnON->setEnabled(false);
-		ui->PumpBtnOFF->setEnabled(true);
-	}
-	else
-	{
-		ui->PumpBtnON->setEnabled(true);
-		ui->PumpBtnOFF->setEnabled(false);
-	}*/
 }
 
 void MainWindow::onHomeSafeBtnClicked()
@@ -329,8 +264,6 @@ void MainWindow::onPrintBtnClicked()
 	ui->PrintBtn->setEnabled(false);
 	QString buttonText = ui->stringType->text();
 	std::string stringToPrint = buttonText.toLocal8Bit().constData();
-	//qDebug() << buttonText;
-	//std::cout << stringToPrint << std::endl;
 	for (unsigned i = 0; i < stringToPrint.size(); i++)
 	{
 		const char charToPrint = stringToPrint[i];
@@ -339,6 +272,51 @@ void MainWindow::onPrintBtnClicked()
 	}
 	ui->PrintBtn->setEnabled(true);
 }
+
+/*void MainWindow::connectCam() // work in progress
+{
+	m_index = 0;
+	m_thread = new CaptureThread(this);
+	connect(m_thread, SIGNAL(captured(QImage, unsigned char *)),
+		this, SLOT(process(QImage, unsigned char *)));
+	m_thread->start();
+
+	if (CameraInit(m_index) == API_ERROR) {
+		QMessageBox::information(this, "Error", "Connect Camera error. Please insert Camera USB repeatedly.");
+		exit(1);
+	}
+	m_thread->setIndex(m_index);
+}*/
+
+/*void MainWindow::initCamParams() //work in progress
+{
+	CameraSetSnapMode(m_index, CAMERA_SNAP_CONTINUATION);
+	int width = 2048;
+	int height = 1536;
+	CameraSetResolution(m_index, 0, &width, &height);
+
+	double gamma = 1.34;
+	CameraSetGamma(m_index, gamma);
+
+	double contrast = 1;
+	CameraSetContrast(m_index, contrast);
+
+	int gain = 63;
+	CameraSetGain(m_index, gain);
+	CameraSetAEC(m_index, true);
+	CameraSetAGC(m_index, false);
+
+	int exposure = 1450;
+	CameraSetExposure(m_index, exposure);
+	CameraSetAEC(m_index, false);
+	CameraSetAWB(m_index, false);
+
+	for (int i = 0; i < 256; i++)
+	{
+		vcolorTable.append(qRgb(i, i, i));
+	}
+	m_thread->stream();
+}*/
 
 void MainWindow::closeEvent(QCloseEvent *)
 {

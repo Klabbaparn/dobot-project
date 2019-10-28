@@ -66,7 +66,6 @@ void dobot::startPump()
 {
 	m_PumpIsActive = true;
 	SetEndEffectorSuctionCup(m_PumpIsActive, 1, 1, 0);
-	qDebug() << "inside startPump";
 }
 
 void dobot::PTPSendBtnClicked(float x, float y, float z, float r) const
@@ -98,7 +97,6 @@ void dobot::HomeSafeBtnClicked() const
 
 void dobot::stopPump()
 {
-	qDebug() << "inside stopPump";
 	m_PumpIsActive = false;
 	SetEndEffectorSuctionCup(m_PumpIsActive, 0, 0, 0);
 }
@@ -107,14 +105,11 @@ void dobot::enablePumpCtrl()
 {
 	if (!m_PumpIsActive)
 	{
-		qDebug() << "insideEnablePump if pump is NOT active";
 		startPump();
 	}
 	else {
-		qDebug() << "insideEnablePump if pump IS active";
 		stopPump();
 	}
-	//return m_PumpIsActive == 1;
 }
 
 void dobot::setTheEndEffParam() const
@@ -198,7 +193,6 @@ void dobot::disconnect()
 
 void dobot::PrintBtnClicked(Point keyCoord)
 {	
-	std::cout << "inside printBtnclicked" << std::endl;
 	std::cout << keyCoord << std::endl;
 	PTPCmd ptpCmd;
 	ptpCmd.ptpMode = PTPMOVJXYZMode;
