@@ -24,7 +24,11 @@ When you run the project you are presented with a GUI that has a variation of bu
 # Buttons
 
 Connect     (Connects the computer with the dobot)
+
 HomeSafe    (Place the axises in a safe position)
+
 SendPTP     (Place the axises in a specific position)
+
 Pump ON/OFF (Start / turn off the pump)
+
 Print       (The dobot will navigate throughout a keyboard and enter the string)
