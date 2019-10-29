@@ -1,4 +1,4 @@
-# dobot-project
+# Skynet
 
 This is a project for the Software Engineering program @BTH.
 The main purpose is to control the Dobot axises and print a string on a keyboard
