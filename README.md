@@ -1,12 +1,12 @@
-#dobot-project
+# dobot-project
 
 This is a project for the Software Engineering program @BTH.
 The main purpose is to control the Dobot axises and print a string on a keyboard
 
-#Language
+# Language
 C++
 
-#Dependencies
+# Dependencies
 
 ```
 1. Visual Studio 2017
@@ -21,7 +21,7 @@ Connect the USB-cable with the dobot.
 When you run the project you are presented with a GUI that has a variation of buttons for use. 
 (Make sure the firewall doesn't block your connection)
 
-#Buttons
+# Buttons
 
 Connect     (Connects the computer with the dobot)
 HomeSafe    (Place the axises in a safe position)
