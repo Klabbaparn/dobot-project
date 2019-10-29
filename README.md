@@ -16,8 +16,7 @@ C++
 
 # Getting started with the GUI
 
-Connect a USB-cable with the dobot.
-When you run the project you are presented with a GUI that has a variation of buttons for use. 
+Connect a USB-cable with the dobot. When you run the project you are presented with a GUI that has a variation of buttons for use. 
 (Make sure the firewall doesn't block your connection)
 
 # Buttons
