@@ -9,14 +9,14 @@ C++
 # Dependencies
 
 ```
-1. Visual Studio 2017
+1. Visual Studio 2019
 2. Qt 5.13.1 / msvc2017
 3. Dobot SDK
 ```
 
 # Getting started with the GUI
 
-Connect a USB-cable with the dobot. When you run the project you are presented with a GUI that has a variation of buttons for use. 
+Connect a USB-cable with the dobot. When you run the project you are presented with a GUI that has a variation of buttons for use.
 (Make sure the firewall doesn't block your connection)
 
 # Buttons
